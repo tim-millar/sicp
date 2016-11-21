@@ -1,8 +1,10 @@
 ;; ========================================
-;; Exercises, Chapter 1, SICP
+;; Exercises, Chapter 1.1, SICP
+;; Elements of Programming
 ;; ========================================
 
-#lang planet neil/sicp
+#lang sicp
+
 
 ;; Ex 1.1
 
@@ -181,3 +183,23 @@
 
 (define (cbrt x)
   (cbrt-iter 1.0 0.5 x))
+
+;; ========================================
+;; Lexically Scoped Rewrite of sqrt
+;; ========================================
+
+(define (sqrtLex x)
+
+  (define (good-enough? guess)
+    (< (abs (- (square guess) x)) 0.001))
+
+  (define (improve guess)
+    (average guess (/ x guess)))
+
+  (define (sqrt-iter guess)
+
+    (if (good-enough? guess)
+        guess
+        (sqrt-iter (improve guess))))
+
+  (sqrt-iter 1.0))
