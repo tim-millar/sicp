@@ -113,7 +113,7 @@ betterSqrt x = betterSqrtIter 1.0 0.5 x
 -- Ex 1.8
 -- ========================================
 
-cubeRoot = cubebRootIter 1.0 0.5
+cubeRoot = cubeRootIter 1.0 0.5
 
 cubeRootIter guess oldGuess x
   | betterGoodEnough guess oldGuess = guess
@@ -126,11 +126,11 @@ improveCube guess x =
 -- Lexically Scoped Rewrite of sqrt
 -- ========================================
 
-squareRoot x = squareIter 1.0
+squareRoot x = squareIter 1.0 x
   where
-    squareIter guess
+    squareIter guess x
       | goodEnough guess = guess
-      | otherwise = squareIter (improve guess)
+      | otherwise = squareIter (improve guess) x
     goodEnough guess = abs (guess^2 - x) < 0.001
-    improve guess = average guess (/ x guess)
+    improve guess = average guess (x / guess)
     average x y = (x + y) / 2
