@@ -7,33 +7,35 @@
 
 ;; Exercise 1.29
 
-(define (integral f a b n)
+(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a)
+         (sum term (next a) next b))))
 
-  (define h (/ (- b a) n))
-
-  (define (coeff i)
-    (cond ((= i 0) 1)
-          ((= i n) 1)
-          ((= (modulo i 2) 0) 4)
-          (else 2)))
-
-  (define (y i)
-    (f (+ a (* i h))))
-
-  (define (sigma f i n)
-    (if (= i n)
-         (f n)
-         (+ (f i) (sigma f (+ i 1) n))))
-
-  (define (g x)
-    (* (coeff x) (y x)))
-
-  (* (/ h 3) (sigma g 0 n)))
+(define (inc n)
+  (+ n 1))
 
 (define (cube x)
   (* x x x))
 
-;; > (integral cube 0 1 100.0)
-;; 0.24671666666666678
-;; > (integral cube 0 1 100000.0)
-;; 0.249996666716668
+(define (simpsons f a b n)
+
+  (define h (/ (- b a) n))
+
+  (define (y k) (f (+ a (* k h))))
+
+  (define (coeff i)
+    (cond ((or (= i 0) (= i n)) 1)
+          ((odd? i) 4)
+          ((even? i) 2)))
+
+  (define (term k)
+    (* (coeff k) (y k)))
+
+  (* (/ h 3.0) (sum term a inc n)))
+
+;; > (simpsons cube 0 1 100.0)
+;; 0.24999999999999992
+;; > (simpsons cube 0 1 1000.0)
+;; 0.2500000000000003
