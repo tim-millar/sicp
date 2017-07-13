@@ -5,7 +5,9 @@
 
 #lang sicp
 
+;; ========================================
 ;; Exercise 1.29
+;; ========================================
 
 (define (sum term a next b)
   (if (> a b)
@@ -39,3 +41,46 @@
 ;; 0.24999999999999992
 ;; > (simpsons cube 0 1 1000.0)
 ;; 0.2500000000000003
+
+
+;; ========================================
+;; Exercise 1.30
+;; ========================================
+
+(define (sum-iter term a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a) (+ (term a) result))))
+  (iter a 0))
+
+;; ========================================
+;; Exercise 1.31
+;; ========================================
+
+(define (product term a next b)
+  (if (> a b)
+      1
+      (* (term a)
+         (product term (next a) next b))))
+
+(define (add-two n)
+  (+ 2 n))
+
+(define num
+  (* (product identity 2 add-two 32)
+     (product identity 4 add-two 34)))
+
+(define denom
+  (* (product identity 3 add-two 33)
+     (product identity 3 add-two 33)))
+
+(define pi-star
+  (* 4 (exact->inexact (/ num denom))))
+
+(define (iter-prod term a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a) (* a result))))
+  (iter a 1))
