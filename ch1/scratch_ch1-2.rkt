@@ -33,7 +33,7 @@
         (else (+ (fib (- n 1))
                  (fib (- n 2))))))
 
-(define (fibPrime n)
+(define (fib-prime n)
   (fib-iter 1 0 n))
 
 (define (fib-iter a b count)

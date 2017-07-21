@@ -86,7 +86,7 @@
   (iter a 1))
 
 ;; ========================================
-;; Exercise 1.33
+;; Exercise 1.32
 ;; ========================================
 
 (define (accumulate combiner null-value term a next b)
@@ -113,3 +113,45 @@
 
 (define (prod-iter-acc term a next b)
   (iter-accumulate * 1 term a next b))
+
+;; ========================================
+;; Exercise 1.33
+;; ========================================
+
+(define (filtered-accumulate predicate combiner null-value term a next b)
+  (cond ((> a b)
+         null-value)
+        ((predicate a)
+         (combiner (term a)
+                   (filtered-accumulate predicate combiner null-value term (next a) next b)))
+        (else
+         (filtered-accumulate predicate combiner null-value term (next a) next b))))
+
+(define (divides? a b)
+   (= (remainder b a) 0))
+
+(define (square x)
+   (* x x))
+
+(define (find-divisor n test-divisor)
+   (cond ((> (square test-divisor) n) n)
+         ((divides? test-divisor n) test-divisor)
+         (else (find-divisor n (+ test-divisor 1)))))
+
+(define (smallest-divisor n)
+   (find-divisor n 2))
+
+(define (prime? n)
+   (= n (smallest-divisor n)))
+
+(define (square-primes a b)
+  (filtered-accumulate prime? + 0 identity a inc b))
+
+(define (gcd a b)
+   (if (= b 0)
+       a
+       (gcd b (remainder a b))))
+
+(define (positive-primes-product n)
+  (define (relatively-prime? i) (= (gcd i n) 1))
+  (filtered-accumulate relatively-prime? * 1 identity 1 inc n))
