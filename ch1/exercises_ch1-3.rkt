@@ -155,3 +155,51 @@
 (define (positive-primes-product n)
   (define (relatively-prime? i) (= (gcd i n) 1))
   (filtered-accumulate relatively-prime? * 1 identity 1 inc n))
+
+;; ========================================
+;; Exercise 1.34
+;; ========================================
+
+(define (f g)
+  (g 2))
+
+;; Suppose you apply f to itself -- i.e., (f f). The function will error. We
+;; can see this through substitution:
+
+;; (f f)
+;; (f 2)
+;; (2 2)
+
+;; `2' is not a function, so cannot be applied to any arguments, hence the error.
+
+;; ========================================
+;; Exercise 1.35
+;; ========================================
+
+;; x = 1 + 1/x
+;; <=>
+;; x^2 = x + 1
+;; <=>
+;; x^2 - x - 1 = 0
+;;
+;; using quadratic formula, roots of above are:
+;; x1 = (1 + sqrt(5))/2
+;; x2 = (1 - sqrt(5))/2
+
+(define tolerance 0.00001)
+
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (< (abs (- v1 v2)) tolerance))
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+          next
+          (try next))))
+  (try first-guess))
+
+;; (fixed-point (lambda (x) (+ 1 (/ 1 x))) 1.0)
+;; 1.6180327868852458
+
+;; (/ (+ 1 (sqrt 5)) 2)
+;; 1.618033988749895
