@@ -203,3 +203,65 @@
 
 ;; (/ (+ 1 (sqrt 5)) 2)
 ;; 1.618033988749895
+
+;; ========================================
+;; Exercise 1.36
+;; ========================================
+
+(define (fixed-point-print f first-guess)
+  (define (close-enough? v1 v2)
+    (< (abs (- v1 v2)) tolerance))
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+          next
+          ((newline)
+           (display guess)
+           (try next)))))
+  (try first-guess))
+
+;; (fixed-point-print (lambda (x) (/ (log 1000) (log x))) 1.01)
+
+(define (average x y)
+  (/ (+ x y) 2.0))
+
+(define (fixed-point-print-avg f first-guess)
+  (define (close-enough? v1 v2)
+    (< (abs (- v1 v2)) tolerance))
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+          next
+          ((newline)
+           (display guess)
+           (try (average guess next))))))
+  (try first-guess))
+
+;; (fixed-point-print-avg (lambda (x) (/ (log 1000) (log x))) 1.01)
+
+;; Both procedures converge. Without damping, procedure repeats for about 40
+;; iterations; with damping procedure repeats for about 15.
+
+;; ========================================
+;; Exercise 1.37
+;; ========================================
+
+(define (cont-frac n d k)
+  (if (= k 0)
+      (/ (n k) (d k))
+      (/ (n k)
+         (+ (d k)
+            (cont-frac n d (- k 1))))))
+
+;; [phi] ~= 1.6180
+;; 1 / [phi] ~= 0.618047
+;; (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 100)
+;; => 0.6180257510729613 ~= 0.6180
+
+(define (cont-frac-iter n d k)
+  (define (iter i result)
+    (if (= i 0)
+        result
+        (iter (- i 1)
+              (/ (n i) (+ (d i) result)))))
+  (iter k 0))
