@@ -247,11 +247,18 @@
 ;; ========================================
 
 (define (cont-frac n d k)
-  (if (= k 0)
+  (if (= k 1)
       (/ (n k) (d k))
       (/ (n k)
          (+ (d k)
             (cont-frac n d (- k 1))))))
+
+(define (cont-frac-x n d k)
+  (define (linear i)
+    (if (= i k)
+        (/ (n i) (d i))
+        (/ (n i) (+ (d i) (linear (+ i 1))))))
+  (linear 1))
 
 ;; [phi] ~= 1.6180
 ;; 1 / [phi] ~= 0.618047
@@ -265,3 +272,30 @@
         (iter (- i 1)
               (/ (n i) (+ (d i) result)))))
   (iter k 0))
+
+
+;; ========================================
+;; Exercise 1.38
+;; ========================================
+
+(define (g i)
+  (cond ((<= i 2) i)
+        ((= 0 (remainder (- i 2) 3))
+         (- i (/ (- i 2) 3.0)))
+        (else 1.0)))
+
+(define (eulers t)
+  (define (f i) 1.0)
+  
+  (cont-frac f g t))
+
+;; if i == 1
+;;   return N_1 / D_1
+;; else
+;;   return tail_call (N_i / (D_i + acc))
+
+(define (continued-fraction n d i acc)
+  (if (= i 1)
+      (+ acc (/ (n i) (d i)))
+      (continued-fraction n d (- i 1) (/ (n i) (+ acc (d i))))))
+
