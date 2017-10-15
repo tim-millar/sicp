@@ -247,13 +247,6 @@
 ;; ========================================
 
 (define (cont-frac n d k)
-  (if (= k 1)
-      (/ (n k) (d k))
-      (/ (n k)
-         (+ (d k)
-            (cont-frac n d (- k 1))))))
-
-(define (cont-frac-x n d k)
   (define (linear i)
     (if (= i k)
         (/ (n i) (d i))
@@ -262,8 +255,8 @@
 
 ;; [phi] ~= 1.6180
 ;; 1 / [phi] ~= 0.618047
-;; (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 100)
-;; => 0.6180257510729613 ~= 0.6180
+;; (cont-frac-x (lambda (i) 1.0) (lambda (i) 1.0) 15)
+;; => 0.6180344478216819 ~= 0.6180
 
 (define (cont-frac-iter n d k)
   (define (iter i result)
@@ -286,16 +279,7 @@
 
 (define (eulers t)
   (define (f i) 1.0)
-  
-  (cont-frac f g t))
+  (+ 2 (cont-frac f g t)))
 
-;; if i == 1
-;;   return N_1 / D_1
-;; else
-;;   return tail_call (N_i / (D_i + acc))
-
-(define (continued-fraction n d i acc)
-  (if (= i 1)
-      (+ acc (/ (n i) (d i)))
-      (continued-fraction n d (- i 1) (/ (n i) (+ acc (d i))))))
-
+;; (eulers 10)
+;; => 0.7182817182817183
