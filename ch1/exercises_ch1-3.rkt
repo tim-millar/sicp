@@ -300,3 +300,60 @@
 ;; -2.185039863261519
 ;; exercises_ch1-3.rkt﻿> (tan-cf 1 100)
 ;; 1.557407724654902
+
+;; ========================================
+;; Exercise 1.40
+;; ========================================
+
+(define (cubic a b c)
+  (lambda (x)
+    (+ (expt x 3)
+       (* a (expt x 2))
+       (* b x)
+       c)))
+
+(define dx 0.00001)
+
+(define (deriv g)
+  (lambda (x)
+    (/ (- (g (+ x dx)) (g x))
+       dx)))
+
+(define (newton-transform g)
+  (lambda (x)
+    (- x (/ (g x) ((deriv g) x)))))
+
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) guess))
+
+;; (newtons-method (cubic 1 1 1) 1)
+;; -0.9999999999997795
+
+;; ========================================
+;; Exercise 1.41
+;; ========================================
+
+(define (double f)
+  (lambda (x) (f (f x))))
+
+;; (((double (double double)) inc) 5)
+;; 21
+
+;; ========================================
+;; Exercise 1.42
+;; ========================================
+
+(define (compose f g)
+  (lambda (x) (f (g x))))
+
+;; ((compose square inc) 6)
+;; 49
+
+;; ========================================
+;; Exercise 1.43
+;; ========================================
+
+(define (repeated f n)
+  (if (= n 1)
+      (lambda (x) (f x))
+      (repeated (compose f f) (- n 1))))
