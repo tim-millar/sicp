@@ -357,3 +357,51 @@
   (if (= n 1)
       (lambda (x) (f x))
       (repeated (compose f f) (- n 1))))
+
+;; ========================================
+;; Exercise 1.44
+;; ========================================
+
+(define (smooth f)
+  (lambda (x) (f (- x dx))))
+
+(define (n-fold-smooth f n)
+  (repeated (smooth f) n))
+
+;; ========================================
+;; Exercise 1.45
+;; ========================================
+
+(define (average-damp f)
+  (lambda (x) (average x (f x))))
+
+(define (nth-root x n)
+  (fixed-point ((repeated average-damp 4) (lambda (y)
+                                            (/ x (expt y (- n 1)))))
+               1.0))
+
+;; nth-root | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | ... | 64
+;; rpt-damp | 1 | 1 | 2 | 2 | 2 | 2 | 3 | 3 | ... | 4
+
+;; ========================================
+;; Exercise 1.46
+;; ========================================
+
+(define (close-enough? guess1 guess2)
+  (< (abs (- guess1 guess2)) 0.001))
+
+(define (improve guess x) ;; improve
+  (average guess (/ x guess)))
+
+(define (iterative-improve good-enough? improve)
+  (lambda (guess)
+    (let ((next (improve guess)))
+      (if (good-enough? guess next)
+          next
+          ((iterative-improve good-enough? improve) next)))))
+
+(define (iter/fixed-point f)
+  ((iterative-improve close-enough? f) 1.0))
+
+(define (iter/sqrt x)
+  ((iterative-improve close-enough? (lambda (y) (average y (/ x y)))) 1.0))
