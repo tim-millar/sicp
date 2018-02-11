@@ -5,7 +5,6 @@
 
 #lang sicp
 
-
 ;; ========================================
 ;; Exercise 2.1
 ;; ========================================
@@ -149,3 +148,147 @@
 ;; height and a width. Then hight and width functions could be created that
 ;; returned those attributes. Then we could use the same area and perimeter
 ;; implementations.
+
+;; E.g.,
+
+;; (define (rectangle point angl height width)
+;;   (cons (cons point angl) (cons height width)))
+
+;; (define (height rectangle)
+;;   (cdr (car rectangle)))
+
+;; (define (width rectangle)
+;;   (cdr (cdr rectangle)))
+
+;; ========================================
+;; Exercise 2.4
+;; ========================================
+
+(define (f/cons x y)
+  (lambda (m) (m x y)))
+
+(define (f/car z)
+  (z (lambda (p q) p)))
+
+(define (f/cdr z)
+  (z (lambda (p q) q)))
+
+;; (car z)
+;; (car (cons x y))
+;; (car (lambda (m) (m x y)))
+;; ((lambda (m) (m x y)) (lambda (p q) p))
+;; ((lambda (p q) p) x y)
+;; x
+
+;; ========================================
+;; Exercise 2.5
+;; ========================================
+
+(define (n/cons x y)
+  (* (expt 2 x) (expt 3 y)))
+
+(define (n/divides? a b)
+  (= 0 (remainder b a)))
+
+(define (n/divide-iter x n)
+  (cond ((= x 0) x)
+        ((not (n/divides? n x)) x)
+        (else (n/divide-iter (/ x n) n))))
+
+(define (n/cdr-helper pr)
+  (n/divide-iter pr 2))
+
+(define (n/car-helper pr)
+  (/ pr (n/cdr-helper pr)))
+
+(define (n/cdr pr)
+  (log (n/cdr-helper pr) 3))
+
+(define (n/car pr)
+  (log (n/car-helper pr) 2))
+
+;; exercises-1.2.rkt﻿> (define p1 (n/cons 3 2))
+;; exercises-1.2.rkt﻿> (n/car p1)
+;; 3.0
+;; exercises-1.2.rkt﻿> (n/cdr p1)
+;; 2.0
+;; exercises-1.2.rkt﻿> 
+
+;; ========================================
+;; Exercise 2.6
+;; ========================================
+
+(define (add-1 n)
+  (lambda (f) (lambda (x) (f ((n f) x)))))
+
+(define zero
+  (lambda (f)
+    (lambda (x) x)))
+
+(define one
+  (lambda (f)
+    (lambda (x)
+      (f (((lambda (f) (lambda (x) x)) f) x)))))
+
+(define two
+  (lambda (f)
+    (lambda (x)
+      (f (((lambda (f)
+             (lambda (x)
+               (f (((lambda (f) (lambda (x) x)) f) x)))) f) x)))))
+
+(define (+ m n)
+  (lambda (f)
+    (lambda (x)
+      ((m f) ((n f) x)))))
+
+;; ========================================
+;; Exercise 2.7
+;; ========================================
+
+(define (make-interval a b) (cons a b))
+
+(define (lower-bound interval) (car interval))
+
+(define (upper-bound interval) (cdr interval))
+
+(define (add-interval x y)
+  (make-interval (+ (lower-bound x) (lower-bound y))
+                 (+ (upper-bound x) (upper-bound y))))
+
+(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) (lower-bound y)))
+        (p2 (* (lower-bound x) (upper-bound y)))
+        (p3 (* (upper-bound x) (lower-bound y)))
+        (p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+                   (max p1 p2 p3 p4))))
+
+(define (div-interval x y)
+  (mul-interval x
+                (make-interval (/ 1.0 (upper-bound y))
+                               (/ 1.0 (lower-bound y)))))
+
+;; ========================================
+;; Exercise 2.8
+;; ========================================
+
+(define (sub-interval x y)
+  (make-interval (- (lower-bound x) (upper-bound y))
+                 (- (upper-bound x) (lower-bound y))))
+
+;; ========================================
+;; Exercise 2.9
+;; ========================================
+
+(define (width-interval x)
+  (/ (+ (lower-bound x) (upper-bound x)) 2))
+
+;; (width-interval (add-interval x y))
+;; (width-interval (cons (+ (lower-bound x) (lower-bound y))
+;;                       (+ (upper-bound x) (upper-bound y))))
+;; (/ (+ (+ (lower-bound x) (lower-bound y))
+;;       (+ (upper-bound x) (upper-bound y)))
+;;    2)
+;; (+ (/ (+ (lower-bound x) (upper-bound x)) 2)
+;;    (/ (+ (lower-bound y) (upper-bound y)) 2))
