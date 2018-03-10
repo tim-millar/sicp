@@ -292,3 +292,51 @@
 ;;    2)
 ;; (+ (/ (+ (lower-bound x) (upper-bound x)) 2)
 ;;    (/ (+ (lower-bound y) (upper-bound y)) 2))
+
+;; ========================================
+;; Exercise 2.10
+;; ========================================
+
+(define (div-interval-no-zero x y)
+  (cond ((= (lower-bound y) (upper-bound y))
+         (error 'division-by-zero))
+        (else
+         (mul-interval x (make-interval (/ 1.0 (upper-bound y))
+                                        (/ 1.0 (lower-bound y)))))))
+
+;; ========================================
+;; Exercise 2.11
+;; ========================================
+
+(define (reduce func lst)
+  (if (null? (cdr lst))
+      (car lst)
+      (func (car lst) (reduce func (cdr lst)))))
+
+(define (all? prd lst)
+  (reduce (lambda (x y) (and x y)) (map prd lst)))
+
+(define (mul-interval-signs x y)
+  (let ((lower-x (lower-bound x))
+        (upper-x (upper-bound x))
+        (lower-y (lower-bound y))
+        (upper-y (upper-bound y)))
+    (cond ((all? negative? '(lower-x upper-x lower-y upper-y))
+           (make-interval (* lower-x lower-y) (* upper-x upper-y)))
+          ((all? negative? '(lower-x upper-x lower-y))
+           (make-interval (* lower-x upper-y) (* lower-x lower-y)))
+          ((all? negative? '(lower-x lower-y upper-y))
+           (make-interval (* upper-x lower-y) (* lower-x lower-y)))
+          ((all? negative? '(lower-x lower-y))
+           (make-interval (min (* lower-x upper-y) (* upper-x lower-y))
+                          (* upper-x upper-y)))
+          ((all? negative? '(lower-y upper-y))
+           (make-interval (* upper-x lower-y) (* lower-x upper-y)))
+          ((all? negative? '(lower-x upper-x))
+           (make-interval (* lower-x upper-y) (* upper-x lower-y)))
+          ((negative? lower-y)
+           (make-interval (* upper-x lower-y) (* upper-x upper-y)))
+          ((negative? lower-x)
+           (make-interval (* lower-x upper-y) (* upper-x upper-y)))
+          (else
+           (make-interval (* lower-x lower-y) (* upper-x upper-y))))))
