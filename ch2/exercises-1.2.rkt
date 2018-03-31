@@ -340,3 +340,44 @@
            (make-interval (* lower-x upper-y) (* upper-x upper-y)))
           (else
            (make-interval (* lower-x lower-y) (* upper-x upper-y))))))
+
+;; ========================================
+;; Exercise 2.12
+;; ========================================
+
+(define (make-center-width c w)
+  (make-interval (- c w) (+ c w)))
+
+(define (p/center i)
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+
+(define (p/width i)
+  (/ (- (upper-bound i) (lower-bound i)) 2))
+
+(define (make-center-percent center tolerance)
+  (make-interval (- center (* center tolerance))
+                 (+ center (* center tolerance))))
+
+(define (p/percent i)
+  (let ((endpoint (upper-bound i))
+        (center (p/center i)))
+    (- (/ endpoint center) 1)))
+
+;; ========================================
+;; Exercise 2.13
+;; ========================================
+
+;; Suppose both intervals are all positive. Then lowest point in the product
+;; interval is the product of the two lowest endpoints. Write this as,
+;; lower-i * lower-j = (center-i - tolerance-i) * (center-j - tolerance-j)
+;; Expand this product but discard the product of the tolerances (since it will be small)
+;; (center-i * center-j) - (tolerance-i * center-j) - (tolerance-j * center-i)
+
+(define (mul-cemnter-percent i j)
+  (let ((center-i (p/center i))
+        (center-j (p/center j))
+        (tolerance-i (p/percent i))
+        (tolerance-j (p/percent j)))
+    (- (* center-i center-j)
+       (* tolerance-i center-j)
+       (* tolerance-j center-i))))
